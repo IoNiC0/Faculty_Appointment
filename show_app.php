@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Appointment Details</title>
+    <link rel="icon" type="image/x-icon" href="./img/2.png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+            display: block;
+            margin: 0 auto;
+            transition: background-color 0.3s ease;
+        }
+
+        .form-group input[type="submit"]:hover {
+            background-color: #3e8e41;
+        }
+
+        table {
+            width: 60%;
+            margin: 0 auto;
+
+            border-collapse: collapse;
+            border: 1px solid #ddd;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        th.highlight {
+            background-color: #E3E6DE;
+
+        }
+
+
+        .details {
+            display: none;
+            background-color: #f9f9f9;
+            
+        }
+        td{
+            cursor: pointer;
+        }
+
+        tr.selected {
+            background-color: #BDC1B7;
+            cursor: pointer;
+        }
+
+        tr.selected td {
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="table-container">
+        <table>
+            <tr>
+                <th>Faculty Name</th>
+            </tr>
+            <?php
+            include 'authentication.php';
+            require 'db_connect.php';
+            $sql = "SELECT u.Name, f.Name AS faculty_name, a.subject, a.Timing, u.Roll AS student_roll
+                FROM user_registration u
+                JOIN appointment a ON u.Roll = a.Roll
+                JOIN faculty f ON a.Faculty_Id = f.Id
+                WHERE u.roll = '" . $_SESSION['roll'] . "';";
+            $result = mysqli_query($db_connection, $sql);
+            $i = 0;
+            while ($row = mysqli_fetch_assoc($result)) {
+                echo '<tr onclick="toggleDetails(' . $i . ')" id="row-' . $i . '">';
+                // echo '<td>' . $row['Name'] . '</td>';
+                echo '<td>' . $row['faculty_name'] . '</td>';
+                // echo '<td>' . $row['subject'] . '</td>';
+                // echo '<td>' . $row['Timing'] . '</td>';
+                // echo '<td>' . $row['student_roll'] . '</td>';
+                echo '</tr>';
+
+                echo '<tr class="details" style="display: none;">';
+                echo '<td colspan="5">';
+                echo '<strong>Additional Details:</strong><br>';
+                echo '<strong>Student Name:</strong> ' . $row['Name'] . '<br>';
+                echo '<strong>Roll:</strong> ' . $row['student_roll'] . '<br>';
+                echo '<strong>Subject:</strong> ' . $row['subject'] . '<br>';
+                echo '<strong>Timing:</strong> ' . $row['Timing'] . '<br>';
+
+                echo '</td>';
+                echo '</tr>';
+                $i++;
+            }
+            ?>
+        </table>
+    </div>
+    <br><br>
+    <div class="form-group">
+        <a href='./admin.php'>
+            <input type="submit" value="Back">
+        </a>
+    </div>
+
+    <script>
+        function toggleDetails(rowId) {
+            const row = document.getElementById("row-" + rowId);
+            const detailsRow = row.nextElementSibling;
+            const isVisible = detailsRow.style.display === "table-row";
+            detailsRow.style.display = isVisible ? "none" : "table-row";
+
+            const rows = document.getElementsByTagName("tr");
+            for (let i = 0; i < rows.length; i++) {
+                rows[i].classList.remove("selected");
+            }
+
+            row.classList.add("selected");
+        }
+    </script>
+</body>
+
+</html>
