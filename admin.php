@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Admin</title>
+    <title>User</title>
     <link rel="icon" type="image/x-icon" href="./img/admin.png">
     <style>
         body {
@@ -70,16 +70,14 @@
 <body>
     <?php include "authentication.php";
     include 'db_connect.php'; ?>
-    <!-- Navbar -->
     <div class="navbar">
         <a href="./appointment.php">Book Appointment</a>
         <a href="./f_view.php">Faculty Members</a>
-        <a href="./std_view.php">Student Details</a>
         <a href="./show_app.php">Appointment Details</a>
         <a href="./logout.php">Log Out</a>
     </div>
     <?php
-    $sql = "SELECT Name from `user_registration` where Roll = '" . $_SESSION['roll'] . "';";
+    $sql = "SELECT Name from `user_registration` where email = '" . $_SESSION['semail'] . "';";
     $result = mysqli_query($db_connection, $sql);
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
@@ -87,7 +85,7 @@
     }
     ?>
     <h1>Welcome
-        <?php echo $name . "<br>Roll Number: (" . $_SESSION['roll'] . ")"; ?>
+        <?php echo $name . "<br>Email: (" . $_SESSION['semail'] . ")"; ?>
     </h1>
 
 

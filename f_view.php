@@ -31,7 +31,8 @@
         }
 
         table {
-            width: 100%;
+            width: 60%;
+            margin: 0 auto;
             border-collapse: collapse;
             border: 1px solid #ddd;
         }
@@ -71,8 +72,6 @@
     <table>
         <tr>
             <th>Faculty Name</th>
-            <!-- <th>Number</th>
-            <th>Address</th> -->
         </tr>
         <?php
         include 'authentication.php';
@@ -83,8 +82,6 @@
         while ($row = mysqli_fetch_assoc($result)) {
             echo '<tr onclick="toggleDetails(' . $i . ')" id="row-' . $i . '">';
             echo '<td>' . $row['Name'] . '</td>';
-            // echo '<td>' . $row['Number'] . '</td>';
-            // echo '<td>' . $row['Address'] . '</td>';
             echo '</tr>';
 
             echo '<tr class="details" style="display: none;">';
@@ -92,7 +89,7 @@
             echo '<strong>Additional Details:</strong><br>';
             echo '<strong>Number:</strong> ' . $row['Number'] . '<br>';
             echo '<strong>Address:</strong> ' . $row['Address'] . '<br>';
-    
+
             echo '</td>';
             echo '</tr>';
             $i++;

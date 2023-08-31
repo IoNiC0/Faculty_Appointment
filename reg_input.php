@@ -38,7 +38,8 @@
         }
 
         .form-group input[type="text"],
-        .form-group input[type="password"] {
+        .form-group input[type="password"],
+        .form-group input[type="email"] {
             width: 85%;
             padding: 10px;
             border-radius: 5px;
@@ -67,7 +68,8 @@
         }
 
         .form-group input[type="text"]:focus,
-        .form-group input[type="password"]:focus {
+        .form-group input[type="password"]:focus,
+        .form-group input[type="email"]:focus {
             border-color: #4CAF50;
         }
 
@@ -118,16 +120,12 @@
 
 <body>
     <h1>Registration Form</h1>
+    <div class="registration-form">
         <form method="POST" action="reg_data.php" autocomplete="off">
             <div class="form-group">
                 <label for="name">Name:<sup style="color:red">*</sup></label>
                 <input type="text" id="name" name="name" placeholder="Enter Your Name" required>
             </div>
-            <div class="form-group">
-                <label for="roll">Roll Number<sup style="color:red">*</sup></label>
-                <input type="text" id="roll" name="roll" placeholder="Enter Your Roll Number" required>
-            </div>
-
             <div class="form-group">
                 <label>Contact Number:<sup style="color:red">*</sup></label>
                 <div class="contact-number">
@@ -146,8 +144,8 @@
                 <input type="text" id="address" name="address" placeholder="Enter Your Address" required>
             </div>
             <div class="form-group">
-                <label for="username">User Name:<sup style="color:red">*</sup></label>
-                <input type="text" id="username" name="username" placeholder="Enter Your User Name" required>
+                <label for="email">Email:<sup style="color:red">*</sup></label>
+                <input type="email" id="email" name="email" placeholder="Enter Your Email" required>
             </div>
 
             <div class="form-group password-input-wrapper">

@@ -2,7 +2,7 @@
 include('db_connect.php');
 
 
-$facultyQuery = "SELECT Name FROM faculty"; 
+$facultyQuery = "SELECT Name FROM faculty";
 $facultyResult = $db_connection->query($facultyQuery);
 
 $facultyNames = [];
@@ -30,6 +30,7 @@ if ($facultyResult->num_rows > 0) {
 
         .container {
             max-width: 600px;
+            /* max-height: 650px; */
             margin: 50px auto;
             background-color: #fff;
             border-radius: 8px;
@@ -108,36 +109,36 @@ if ($facultyResult->num_rows > 0) {
     </style>
 </head>
 <body>
-    <?php   include 'authentication.php'; ?>
+    <?php include 'authentication.php'; ?>
     <?php
-    $sql = "SELECT Name from `user_registration` where Roll = '" . $_SESSION['roll'] . "';";
+    $sql = "SELECT Name from `user_registration` where email = '" . $_SESSION['semail'] . "';";
     $result = mysqli_query($db_connection, $sql);
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         $name = $row['Name'];
     }
     ?>
-    <h3>
-        <?php echo $name . "<br>Roll Number: (" . $_SESSION['roll'] . ")"; ?>
-    </h3>
     <div class="container">
         <h1>Appointment Form</h1>
-        <h3>Welcome <?php  echo $_SESSION['roll']; ?></h3>
-        <form action="process_appointment.php" method="post" autocomplete="off">
+        <form action="process_appointment.php" method="post" autocomplete="off" onsubmit="return validateDateTime();">
             <label for="faculty">Faculty Name:</label>
             <select id="faculty" name="faculty" required>
                 <?php
-       
+
                 foreach ($facultyNames as $faculty) {
                     echo "<option value='" . $faculty . "'>" . $faculty . "</option>";
                 }
                 ?>
             </select>
-            <label for="scheduleTime">Schedule Time:</label>
-            <input type="date" id="scheduleTime" name="scheduleTime" required>
+            <label for="scheduleTime">Schedule Date:</label>
+            <?php
+            $today = date("Y-m-d");
+            echo '<input type="date" id="scheduleTime" name="scheduleTime" value="' . $today . '" min="' . $today . '" required>';
+            ?>
+            <label for="Time">Schedule Time:</label>
+            <input type="time" id="Time" name="Time" value="<?php echo date('H:i'); ?>" required>
             <label for="subject">Subject:</label>
             <input type="text" id="subject" name="subject" required>
-
             <div class="form-group">
                 <input type="submit" value="Book Appointment">
             </div>
@@ -145,10 +146,38 @@ if ($facultyResult->num_rows > 0) {
         <br><br>
         <div class="form-group">
         <a href='./admin.php'>
-            <input type="submit" value="Back">
+            <input type="submit" value="Back" id="back-btn">
         </a>
     </div>
     </div>
-    
+    <script>
+       function validateDateTime() {
+            const selectedTime = document.getElementById('Time').value;
+            const selectedDate = document.getElementById('scheduleTime').value;
+            const now = new Date();
+            const selectedDateTime = new Date(`${selectedDate}T${selectedTime}`);
+            const todayDate = now.toISOString().split('T')[0];
+
+            const startTime = new Date(`${selectedDate}T09:00`);
+            const endTime = new Date(`${selectedDate}T18:00`);
+
+            if (selectedDateTime < now) {
+                alert('You cannot select a date and time in the past.');
+                return false;
+            }
+
+            if (selectedDate === todayDate && now.getHours() >= 18) {
+                alert('You cannot select a time after 6:00 PM for today.');
+                return false;
+            }
+
+            if (selectedDateTime < startTime || selectedDateTime > endTime) {
+                alert('Appointments are only available between 9 AM and 6 PM.');
+                return false;
+            }
+
+            return true;
+        }
+    </script>
 </body>
 </html>

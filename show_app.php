@@ -4,6 +4,7 @@
 <head>
     <title>Appointment Details</title>
     <link rel="icon" type="image/x-icon" href="./img/2.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -47,32 +48,33 @@
         }
 
         th {
-            background-color: #f2f2f2;
+            background-color: #ccc;
         }
 
         th.highlight {
             background-color: #E3E6DE;
-
         }
 
 
         .details {
             display: none;
             background-color: #f9f9f9;
-            
         }
-        td{
-            cursor: pointer;
-        }
+
 
         tr.selected {
-            background-color: #BDC1B7;
+            background-color: #f9f9f9;
             cursor: pointer;
         }
 
-        tr.selected td {
+        /* tr.selected td {
             font-weight: bold;
+        } */
+        .edit-icon,
+        .delete-icon {
             cursor: pointer;
+            font-size: 18px;
+            margin-right: 10px;
         }
     </style>
 </head>
@@ -82,36 +84,48 @@
         <table>
             <tr>
                 <th>Faculty Name</th>
+                <th>Status</th>
+                <th>Edit</th>
+                <th>Delete</th>
             </tr>
             <?php
             include 'authentication.php';
             require 'db_connect.php';
-            $sql = "SELECT u.Name, f.Name AS faculty_name, a.subject, a.Timing, u.Roll AS student_roll
+            $sql = "SELECT u.Name, f.Name AS faculty_name, a.subject, a.Timing,a.sTime,a.Status,a.app_id, u.email AS student_roll
                 FROM user_registration u
-                JOIN appointment a ON u.Roll = a.Roll
+                JOIN appointment a ON u.email = a.email
                 JOIN faculty f ON a.Faculty_Id = f.Id
-                WHERE u.roll = '" . $_SESSION['roll'] . "';";
+                WHERE u.email = '" . $_SESSION['semail'] . "';";
             $result = mysqli_query($db_connection, $sql);
             $i = 0;
             while ($row = mysqli_fetch_assoc($result)) {
-                echo '<tr onclick="toggleDetails(' . $i . ')" id="row-' . $i . '">';
-                // echo '<td>' . $row['Name'] . '</td>';
-                echo '<td>' . $row['faculty_name'] . '</td>';
-                // echo '<td>' . $row['subject'] . '</td>';
-                // echo '<td>' . $row['Timing'] . '</td>';
-                // echo '<td>' . $row['student_roll'] . '</td>';
-                echo '</tr>';
-
-                echo '<tr class="details" style="display: none;">';
-                echo '<td colspan="5">';
-                echo '<strong>Additional Details:</strong><br>';
-                echo '<strong>Student Name:</strong> ' . $row['Name'] . '<br>';
-                echo '<strong>Roll:</strong> ' . $row['student_roll'] . '<br>';
-                echo '<strong>Subject:</strong> ' . $row['subject'] . '<br>';
-                echo '<strong>Timing:</strong> ' . $row['Timing'] . '<br>';
-
-                echo '</td>';
-                echo '</tr>';
+                $id = $row['app_id'];
+                date_default_timezone_set('Asia/Kolkata');
+                $appointmentDateTime = $row['Timing'] . ' ' . $row['sTime'];
+                $currentDateTime = date('Y-m-d H:i:s');
+                if ($appointmentDateTime >= $currentDateTime) {
+                    echo '<tr onclick="toggleDetails(' . $i . ')" id="row-' . $i . '">';
+                    echo '<td>' . $row['faculty_name'] . '</td>';
+                    echo '<td>' . $row['Status'] . '</td>';
+                    echo "&nbsp"."&nbsp"."&nbsp";
+                    echo '<td><a href="edit.php?row_id=' . $id . '" class="edit-icon"><i class="fas fa-edit"></i></a></td>';
+                    echo '<td><a href="dlt_app.php?row_id=' . $id . '" class="delete-icon"><i class="fas fa-trash"></i></a></td>';
+                    echo '</tr>';
+                    echo '<tr class="details" style="display: none;">';
+                    echo '<td colspan="5">';
+                    echo '<strong>Additional Details:</strong><br>';
+                    echo '<strong>Student Name:</strong> ' . $row['Name'] . '<br>';
+                    echo '<strong>Appointment Id:</strong> ' . $row['app_id'] . '<br>';
+                    echo '<strong>Email:</strong> ' . $row['student_roll'] . '<br>';
+                    echo '<strong>Subject:</strong> ' . $row['subject'] . '<br>';
+                    echo '<strong>Date:</strong> ' . $row['Timing'] . '<br>';
+                    echo '<strong>Time:</strong> ' . $row['sTime'] . '<br>';
+                    echo '</td>';
+                    echo '</tr>';
+                } else {
+                    // $deleteQuery = "DELETE FROM appointment WHERE Std_Id='$id';";
+                    // mysqli_query($db_connection, $deleteQuery);
+                }
                 $i++;
             }
             ?>
@@ -138,6 +152,25 @@
 
             row.classList.add("selected");
         }
+        document.addEventListener("DOMContentLoaded", function () {
+            const editIcons = document.querySelectorAll(".edit-icon");
+            const deleteIcons = document.querySelectorAll(".delete-icon");
+
+            editIcons.forEach(icon => {
+                icon.addEventListener("click", function (event) {
+                    event.stopPropagation();
+                });
+            });
+
+            deleteIcons.forEach(icon => {
+                icon.addEventListener("click", function (event) {
+                    event.stopPropagation();
+                    if (!confirm("Are you sure you want to delete this appointment?")) {
+                        event.preventDefault();
+                    }
+                });
+            });
+        });
     </script>
 </body>
 

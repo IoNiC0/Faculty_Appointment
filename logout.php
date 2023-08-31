@@ -1,7 +1,7 @@
 <?php
-    session_start();
-    if(session_destroy())
-    {
-        header("location:index.php");
-    }
+session_start();
+if (isset($_SESSION['semail'])) {
+    unset($_SESSION['semail']);
+    header("location:index.php");
+}
 ?>

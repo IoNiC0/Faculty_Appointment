@@ -73,13 +73,9 @@
     <table>
         <tr>
             <th>Student Name</th>
-            <!-- <th>Number</th>
-            <th>Course</th>
-            <th>Address</th>
-            <th>Roll</th> -->
         </tr>
         <?php
-        include 'authentication.php';
+        include 'auth.php';
         require 'db_connect.php';
         $sql = "SELECT * FROM `user_registration`";
         $result = mysqli_query($db_connection, $sql);
@@ -87,19 +83,13 @@
         while ($row = mysqli_fetch_assoc($result)) {
             echo '<tr onclick="toggleDetails(' . $i . ')" id="row-' . $i . '">';
             echo '<td>' . $row['Name'] . '</td>';
-            // echo '<td>' . $row['Number'] . '</td>';
-            // echo '<td>' . $row['Course'] . '</td>';
-            // echo '<td>' . $row['Address'] . '</td>';
-            // echo '<td>' . $row['Roll'] . '</td>';
             echo '</tr>';
-
             echo '<tr class="details" style="display: none;">';
             echo '<td colspan="5">';
             echo '<strong>Additional Details:</strong><br>';
             echo '<strong>Number:</strong> ' . $row['Number'] . '<br>';
             echo '<strong>Course:</strong> ' . $row['Course'] . '<br>';
             echo '<strong>Address:</strong> ' . $row['Address'] . '<br>';
-
             echo '</td>';
             echo '</tr>';
             $i++;
@@ -108,7 +98,7 @@
     </table>
     <br><br>
     <div class="form-group">
-        <a href='./admin.php'>
+        <a href='./panel.php'>
             <input type="submit" value="Back">
         </a>
     </div>
